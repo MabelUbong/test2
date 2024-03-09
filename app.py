@@ -1,5 +1,4 @@
 import streamlit as st
-import requests
 from google.cloud import speech, texttospeech
 import struct
 import os
