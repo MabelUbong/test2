@@ -2,8 +2,7 @@ streamlit
 requests
 google-cloud-speech
 google-cloud-texttospeech
-opencv-python-headless
-numpy
-Pillow
+pyaudio
 pydub
+opencv-python-headless
 google-generativeai
