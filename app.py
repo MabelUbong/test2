@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 from google.cloud import speech, texttospeech
-import pyaudio
 import struct
 import os
 import cv2
