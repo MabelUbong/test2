@@ -1,2 +1,10 @@
 streamlit
-google-cloud-language gTTS
+requests
+google-cloud-speech
+google-cloud-texttospeech
+pyaudio
+opencv-python-headless
+numpy
+Pillow
+pydub
+google-generativeai
