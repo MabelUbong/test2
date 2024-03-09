@@ -5,3 +5,5 @@ google-cloud-texttospeech
 pydub
 opencv-python-headless
 google-generativeai
+sounddevice
+numpy
