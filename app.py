@@ -1,15 +1,9 @@
 import streamlit as st
-import requests
 from google.cloud import speech, texttospeech
-import pyaudio
-import struct
+import sounddevice as sd
+import numpy as np
 import os
-import cv2
-import time
-from collections import deque
-from datetime import datetime
 from pydub import AudioSegment
-from pydub.playback import play
 import google.generativeai as genai
 
 # Function to get Gemini response
@@ -43,48 +37,19 @@ def text_to_speech_google(text):
 
     return "output.wav"  # Return the path to the saved file
 
-# Function to record audio using PyAudio
-def record_audio():
-    audio = pyaudio.PyAudio()
-
-    # Parameters for audio recording
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 1
-    RATE = 44100
-    CHUNK = 1024
-    RECORD_SECONDS = 5
-    WAVE_OUTPUT_FILENAME = "input.wav"
-
-    # Create an input stream
-    stream = audio.open(format=FORMAT,
-                        channels=CHANNELS,
-                        rate=RATE,
-                        input=True,
-                        frames_per_buffer=CHUNK)
-
+# Function to record audio using sounddevice
+def record_audio(filename, duration=5, sample_rate=44100):
     st.info("Recording... Speak now!")
 
-    frames = []
-    for _ in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-        data = stream.read(CHUNK)
-        frames.append(data)
+    # Start recording
+    audio = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype=np.int16)
+    sd.wait()  # Wait until recording is finished
+
+    # Save the audio to a WAV file
+    sd.write(filename, audio, sample_rate)
 
     st.info("Recording finished!")
-
-    # Stop and close the stream
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
-    # Save the recorded audio to a WAV file
-    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(audio.get_sample_size(FORMAT))
-    wf.setframerate(RATE)
-    wf.writeframes(b''.join(frames))
-    wf.close()
-
-    return WAVE_OUTPUT_FILENAME
+    return filename
 
 def main():
     st.title("Gemini Interviewer")
@@ -111,7 +76,7 @@ def main():
             st.audio(audio_file, format='audio/wav')
 
     if st.button("Record Your Voice"):
-        audio_file = record_audio()
+        audio_file = record_audio("input.wav")
         st.audio(audio_file, format='audio/wav')
 
 if __name__ == "__main__":
